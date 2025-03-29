@@ -1,0 +1,23 @@
+# Python
+__pycache__/
+*.pyc
+*.pyo
+*.pyd
+*.egg-info/
+
+# Virtualenvs
+venv/
+.env
+.env.*
+
+# VSCode or IDE stuff
+.vscode/
+.idea/
+
+# Output
+docs/
+*.log
+
+# proxies list
+proxies.txt
+proxies_valid.txt
