@@ -1,4 +1,4 @@
-# 🚀 v0.2.0 – Auto .env + API Key Check
+# 🚀 v0.2.1 – Auto .env + API Key Check
 
 ## ✨ Features
 
