@@ -7,6 +7,28 @@
 
 
 
+- auto-update from GitHub Actions [`3f1ada7`]
+
+
+
+
+### 🚀 Features
+
+
+
+- add click nav support for sidebar spa docs [`b76c3a1`]
+
+- add ability to retry failed url scrapes [`4bb74cc`]
+
+
+## 🚀 v0.3.0 — 2025-03-30
+
+
+
+### 📝 Documentation
+
+
+
 - auto-update from GitHub Actions [`77180fa`]
 
 
