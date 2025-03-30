@@ -2,18 +2,21 @@
 header = "# Changelog"
 body = """
 {% for group, commits in commits | group_by(attribute="group") %}
-### {% match group %}
-{% when "feat" %}🚀 Features
-{% when "fix" %}🐛 Fixes
-{% when "chore" %}🔧 Chores
-{% when "docs" %}📝 Documentation
-{% when "refactor" %}🛠 Improvements
-{% when "perf" %}🛠 Improvements
-{% when "style" %}🛠 Improvements
-{% when "test" %}🧪 Testing & CI
-{% when "ci" %}🧪 Testing & CI
-{% else %}🔸 Other
-{% endmatch %}
+{% if group == "feat" %}
+### 🚀 Features
+{% elif group == "fix" %}
+### 🐛 Fixes
+{% elif group == "chore" %}
+### 🔧 Chores
+{% elif group == "docs" %}
+### 📝 Documentation
+{% elif group == "refactor" or group == "perf" or group == "style" %}
+### 💠 Improvements
+{% elif group == "test" or group == "ci" %}
+### 🧪 Testing & CI
+{% else %}
+### 🔸 Other
+{% endif %}
 
 {% for commit in commits %}
 - {{ commit.message | trim }} [`{{ commit.id | truncate(length=7, end="" ) }}`]
@@ -28,5 +31,5 @@ tag_pattern = "v[0-9]*"
 
 [git]
 conventional_commits = true
-filter_unconventional = false  # ← Now include ALL commits!
+filter_unconventional = false
 tag_pattern = "v[0-9]*"
