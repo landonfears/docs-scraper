@@ -29,7 +29,7 @@ def log_proxy_result(proxy: str, status: str, logfile: Path):
         f.write(f"{proxy} - {status}\n")
 
 
-def run_puppeteer_scraper(url: str, out_dir: str, headless: bool = True, retries: int = 3, delay: int = 2, proxy: str = None, proxy_type: str = "http", timeout: int = 60000, skip_existing: bool = False, click_nav: bool = False, nav_selector: str = ".sidebar a"):
+def run_puppeteer_scraper(url: str, out_dir: str, headless: bool = True, retries: int = 3, delay: int = 2, proxy: str = None, proxy_type: str = "http", timeout: int = 60000, skip_existing: bool = False, click_nav: bool = False, nav_selector: str = ".sidebar a", retry_failed: bool = False):
     script_path = Path(__file__).parent / "puppeteer_scraper.js"
     args = ["node", str(script_path), url, out_dir]
 
@@ -47,7 +47,10 @@ def run_puppeteer_scraper(url: str, out_dir: str, headless: bool = True, retries
         args.append("--click-nav")
     if nav_selector:
         args.append(f"--nav-selector={nav_selector}")
+    if skip_existing:
         args.append("--skip-existing")
+    if retry_failed:
+        args.append("--retry-failed")
 
     subprocess.run(args, check=True)
 
@@ -68,6 +71,7 @@ def main():
     parser.add_argument("--log", default="proxy_log.txt")
     parser.add_argument("--click-nav", action="store_true", help="Enable click-based sidebar scraping")
     parser.add_argument("--nav-selector", default=".sidebar a", help="CSS selector for sidebar nav links")
+    parser.add_argument("--retry-failed", action="store_true", help="Retry scraping failed_urls.txt from the output directory")
     args = parser.parse_args()
 
     log_path = Path(args.log).expanduser().resolve()
@@ -89,7 +93,8 @@ def main():
                 timeout=args.timeout,
                 skip_existing=args.skip_existing,
                 click_nav=args.click_nav,
-                nav_selector=args.nav_selector
+                nav_selector=args.nav_selector,
+                retry_failed=args.retry_failed
             )
             log_proxy_result(premium_proxy, "SUCCESS", log_path)
             return
@@ -117,7 +122,8 @@ def main():
                     timeout=args.timeout,
                     skip_existing=args.skip_existing,
                     click_nav=args.click_nav,
-                    nav_selector=args.nav_selector
+                    nav_selector=args.nav_selector,
+                    retry_failed=args.retry_failed
                 )
                 log_proxy_result(proxy, "SUCCESS", log_path)
                 return
@@ -138,7 +144,8 @@ def main():
             timeout=args.timeout,
             skip_existing=args.skip_existing,
             click_nav=args.click_nav,
-            nav_selector=args.nav_selector
+            nav_selector=args.nav_selector,
+            retry_failed=args.retry_failed
         )
         log_proxy_result("NO_PROXY", "SUCCESS", log_path)
     except subprocess.CalledProcessError:

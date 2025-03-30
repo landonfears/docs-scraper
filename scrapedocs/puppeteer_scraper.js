@@ -1,5 +1,3 @@
-// puppeteer_scraper.js with --click-nav support for sidebar SPA docs
-
 const puppeteer = require("puppeteer-extra");
 const StealthPlugin = require("puppeteer-extra-plugin-stealth");
 const fs = require("fs");
@@ -78,6 +76,12 @@ async function scrapeUrls(
         }
       }
     }
+  }
+
+  if (failedUrls.length > 0) {
+    const failLogPath = path.join(outputDir, "failed_urls.txt");
+    fs.writeFileSync(failLogPath, failedUrls.join("\n"));
+    console.log(`📝 Failed URLs logged to ${failLogPath}`);
   }
 }
 
@@ -242,7 +246,7 @@ async function scrapeSite(
         const failedUrls = [];
         const toVisit = retryFailedOnly
           ? fs
-              .readFileSync("failed_urls.txt", "utf-8")
+              .readFileSync(path.join(outputDir, "failed_urls.txt"), "utf-8")
               .split("\n")
               .filter(Boolean)
           : [baseUrl];
