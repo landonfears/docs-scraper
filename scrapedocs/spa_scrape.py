@@ -29,7 +29,7 @@ def log_proxy_result(proxy: str, status: str, logfile: Path):
         f.write(f"{proxy} - {status}\n")
 
 
-def run_puppeteer_scraper(url: str, out_dir: str, headless: bool = True, retries: int = 3, delay: int = 2, proxy: str = None, proxy_type: str = "http", timeout: int = 60000, skip_existing: bool = False):
+def run_puppeteer_scraper(url: str, out_dir: str, headless: bool = True, retries: int = 3, delay: int = 2, proxy: str = None, proxy_type: str = "http", timeout: int = 60000, skip_existing: bool = False, click_nav: bool = False, nav_selector: str = ".sidebar a"):
     script_path = Path(__file__).parent / "puppeteer_scraper.js"
     args = ["node", str(script_path), url, out_dir]
 
@@ -42,6 +42,11 @@ def run_puppeteer_scraper(url: str, out_dir: str, headless: bool = True, retries
     args.append(f"--delay={delay * 1000}")
     args.append(f"--timeout={timeout}")
     if skip_existing:
+        args.append("--skip-existing")
+    if click_nav:
+        args.append("--click-nav")
+    if nav_selector:
+        args.append(f"--nav-selector={nav_selector}")
         args.append("--skip-existing")
 
     subprocess.run(args, check=True)
@@ -61,6 +66,8 @@ def main():
     parser.add_argument("--premium-user", default=os.getenv("PREMIUM_PROXY_USER"))
     parser.add_argument("--premium-pass", default=os.getenv("PREMIUM_PROXY_PASS"))
     parser.add_argument("--log", default="proxy_log.txt")
+    parser.add_argument("--click-nav", action="store_true", help="Enable click-based sidebar scraping")
+    parser.add_argument("--nav-selector", default=".sidebar a", help="CSS selector for sidebar nav links")
     args = parser.parse_args()
 
     log_path = Path(args.log).expanduser().resolve()
@@ -80,7 +87,9 @@ def main():
                 proxy=premium_proxy,
                 proxy_type=args.proxy_type,
                 timeout=args.timeout,
-                skip_existing=args.skip_existing
+                skip_existing=args.skip_existing,
+                click_nav=args.click_nav,
+                nav_selector=args.nav_selector
             )
             log_proxy_result(premium_proxy, "SUCCESS", log_path)
             return
@@ -106,7 +115,9 @@ def main():
                     proxy=proxy,
                     proxy_type=args.proxy_type,
                     timeout=args.timeout,
-                    skip_existing=args.skip_existing
+                    skip_existing=args.skip_existing,
+                    click_nav=args.click_nav,
+                    nav_selector=args.nav_selector
                 )
                 log_proxy_result(proxy, "SUCCESS", log_path)
                 return
@@ -125,7 +136,9 @@ def main():
             delay=args.delay,
             proxy=None,
             timeout=args.timeout,
-            skip_existing=args.skip_existing
+            skip_existing=args.skip_existing,
+            click_nav=args.click_nav,
+            nav_selector=args.nav_selector
         )
         log_proxy_result("NO_PROXY", "SUCCESS", log_path)
     except subprocess.CalledProcessError:
