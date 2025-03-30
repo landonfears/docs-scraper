@@ -21,17 +21,24 @@ jobs:
         with:
           python-version: 3.11
 
-      - name: 📦 Install git-cliff dynamically (latest release)
+      - name: 📦 Install git-cliff (latest release, musl build)
         run: |
           set -e
+
           RELEASE_URL=$(curl -s https://api.github.com/repos/orhun/git-cliff/releases/latest \
             | jq -r '.assets[] | select(.name | test("x86_64.*musl.*tar.gz$")) | .browser_download_url')
 
           echo "➡️ Downloading from: $RELEASE_URL"
           curl -sSL "$RELEASE_URL" -o cliff.tar.gz
           tar -xzf cliff.tar.gz
-          chmod +x git-cliff
-          sudo mv git-cliff /usr/local/bin/
+
+          # Find the actual extracted binary name
+          CLIFF_BIN=$(tar -tzf cliff.tar.gz | grep -E '^git-cliff[-.0-9a-z]*$' | head -n 1)
+          echo "🔍 Extracted binary: $CLIFF_BIN"
+
+          chmod +x "$CLIFF_BIN"
+          sudo mv "$CLIFF_BIN" /usr/local/bin/git-cliff
+
           git-cliff --version
 
       - name: ✍ Generate changelog
