@@ -21,11 +21,15 @@ jobs:
         with:
           python-version: 3.11
 
-      - name: 📦 Install git-cliff
+      - name: 📦 Install latest git-cliff
         run: |
-          curl -sSL https://github.com/orhun/git-cliff/releases/latest/download/git-cliff-linux-x86_64 -o git-cliff
+          LATEST=$(curl -s https://api.github.com/repos/orhun/git-cliff/releases/latest | jq -r '.tag_name')
+          VERSION=${LATEST#v}
+          echo "➡️ Installing git-cliff $VERSION"
+          curl -sSL https://github.com/orhun/git-cliff/releases/download/${LATEST}/git-cliff-linux-x86_64 -o git-cliff
           chmod +x git-cliff
           sudo mv git-cliff /usr/local/bin/
+          git-cliff --version
 
       - name: ✍ Generate changelog
         run: git-cliff -o CHANGELOG.md

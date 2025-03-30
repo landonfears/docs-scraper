@@ -7,8 +7,6 @@ update-deps:
 run:
 	scrape-docs --help
 
-VERSION ?= $(shell grep '^version =' pyproject.toml | head -1 | cut -d'"' -f2)
-
 changelog:
 	git-cliff -o CHANGELOG.md
 	git add CHANGELOG.md
@@ -18,11 +16,29 @@ release: changelog
 	git tag v$(VERSION)
 	git push origin main --tags
 
+VERSION := $(shell grep '^version =' pyproject.toml | head -1 | cut -d'"' -f2)
+TAG := v$(VERSION)
+
+sync-tag:
+	@if git rev-parse $(TAG) >/dev/null 2>&1; then \
+	  echo "✅ Tag $(TAG) already exists."; \
+	else \
+	  echo "🏷  Tagging version $(TAG)..."; \
+	  git tag $(TAG); \
+	  git push origin $(TAG); \
+	fi
+
 bump-patch:
-	bump-my-version bump patch && git push
+	bump-my-version bump patch
+	git push
+	$(MAKE) sync-tag
 
 bump-minor:
-	bump-my-version bump minor && git push
+	bump-my-version bump minor
+	git push
+	$(MAKE) sync-tag
 
 bump-major:
-	bump-my-version bump major && git push
+	bump-my-version bump major
+	git push
+	$(MAKE) sync-tag
