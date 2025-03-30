@@ -15,7 +15,7 @@
 
 # docs-scraper
 
-**Version:** `0.2.11`
+**Version:** `0.2.12`
 
 A powerful CLI tool to scrape documentation websites into Markdown using rotating proxies, ScraperAPI, and local context injection for GitHub Copilot.
 
