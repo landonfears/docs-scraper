@@ -41,12 +41,6 @@ jobs:
           VERSION=$(grep '^version =' pyproject.toml | head -1 | cut -d '"' -f2)
           echo "version=$VERSION" >> $GITHUB_OUTPUT
 
-      - name: 🌟 Create git tag for version
-        run: |
-          git tag v${{ steps.version.outputs.version }}
-          git push origin v${{ steps.version.outputs.version }}
-        continue-on-error: true
-
       - name: 🌟 Create GitHub release
         uses: softprops/action-gh-release@v1
         with:
