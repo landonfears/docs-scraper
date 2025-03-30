@@ -13,9 +13,7 @@ from dotenv import load_dotenv
 from pathlib import Path
 import shutil
 
-# Load environment variables
-load_dotenv()
-
+# ------------------ Env Bootstrap ------------------ #
 def ensure_env_file():
     example_path = Path(".env.example")
     actual_path = Path(".env")
@@ -23,6 +21,11 @@ def ensure_env_file():
     if not actual_path.exists() and example_path.exists():
         shutil.copy(example_path, actual_path)
         print("📄 Created .env from .env.example — please fill in your ScraperAPI key.")
+
+def validate_scraperapi_key():
+    api_key = os.getenv("SCRAPERAPI_KEY")
+    if not api_key or "your_api_key_here" in api_key.lower():
+        print("⚠️  Warning: SCRAPERAPI_KEY is not set or still contains a placeholder. ScraperAPI requests may fail.")
 
 visited = set()
 
@@ -310,5 +313,9 @@ def main():
     print("\n✅ Done!")
 
 if __name__ == "__main__":
+    # ------------------ Load Environment ------------------ #
     ensure_env_file()
+    load_dotenv()
+    validate_scraperapi_key()
+    
     main()
