@@ -13,8 +13,10 @@ jobs:
     runs-on: ubuntu-latest
 
     steps:
-      - name: 📂 Checkout code
+      - name: 📂 Checkout full repo
         uses: actions/checkout@v3
+        with:
+          fetch-depth: 0
 
       - name: 🛠 Set up Python
         uses: actions/setup-python@v4
@@ -25,7 +27,7 @@ jobs:
         uses: taiki-e/install-action@git-cliff
 
       - name: ✍ Generate changelog
-        run: git-cliff --latest --tag v${{ steps.version.outputs.version }} -o CHANGELOG.md
+        run: git-cliff --tag v${{ steps.version.outputs.version }} -o CHANGELOG.md
 
       - name: 💾 Commit changelog
         run: |
