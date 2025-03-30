@@ -21,3 +21,9 @@ docs/
 # proxies list
 proxies.txt
 proxies_valid.txt
+
+# dependencies
+node_modules
+
+# macOS
+.DS_Store

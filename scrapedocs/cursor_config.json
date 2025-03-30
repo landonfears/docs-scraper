@@ -1,0 +1,9 @@
+{
+  "context": {
+    "include": ["docs/**/*", "README.md"],
+    "exclude": ["node_modules/**", ".next/**"]
+  },
+  "chat": {
+    "instructions": "Use the local /docs folder as the primary reference for this project. Prioritize these docs when answering questions or scaffolding code."
+  }
+}

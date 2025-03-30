@@ -1,0 +1,25 @@
+{
+  "name": "spa-scraper",
+  "version": "1.0.0",
+  "description": "Puppeteer-powered documentation scraper that converts SPA pages to Markdown.",
+  "main": "puppeteer_scraper.js",
+  "scripts": {
+    "start": "node puppeteer_scraper.js",
+    "scrape": "node puppeteer_scraper.js --help"
+  },
+  "keywords": [
+    "scraper",
+    "puppeteer",
+    "markdown",
+    "spa",
+    "docs"
+  ],
+  "author": "Landon Fears",
+  "license": "MIT",
+  "dependencies": {
+    "puppeteer": "^21.3.8",
+    "puppeteer-extra": "^3.3.6",
+    "puppeteer-extra-plugin-stealth": "^2.11.2",
+    "turndown": "^7.1.2"
+  }
+}

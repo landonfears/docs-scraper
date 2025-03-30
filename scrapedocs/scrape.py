@@ -122,12 +122,17 @@ def is_valid_link(href, base_netloc, restrict_path=None):
         return False
     return True
 
-def save_markdown(base_url, url, content, output_dir):
+def save_markdown(base_url, url, content, output_dir, skip_existing=False):
     rel_path = urlparse(url).path.strip("/")
     if rel_path == "":
         rel_path = "index"
     filename = rel_path.replace("/", "_") + ".md"
     filepath = os.path.join(output_dir, filename)
+
+    if skip_existing and os.path.exists(filepath):
+        print(f"⏩ Skipping existing file: {filepath}")
+        return
+
 
     os.makedirs(os.path.dirname(filepath), exist_ok=True)
     with open(filepath, "w", encoding="utf-8") as f:
@@ -159,7 +164,7 @@ def try_request_with_fallback(full_url, headers, scraperapi_config, proxy, timeo
 
 def crawl(base_url, current_url, output_dir, base_netloc, headers=None, proxies=None,
           proxy_type="http", limit=None, verbose=False, follow_links=True, delay_range=None,
-          scraperapi_config=None, dry_run=False, max_depth=None, depth=0, restrict_path=None):
+          scraperapi_config=None, dry_run=False, max_depth=None, depth=0, restrict_path=None, skip_existing=False):
     if limit is not None and len(visited) >= limit:
         return
 
@@ -206,7 +211,7 @@ def crawl(base_url, current_url, output_dir, base_netloc, headers=None, proxies=
         return
 
     markdown = md(str(main))
-    save_markdown(base_url, full_url, markdown, output_dir)
+    save_markdown(base_url, full_url, markdown, output_dir, skip_existing=skip_existing)
 
     if follow_links:
         for link in main.find_all("a", href=True):
@@ -242,6 +247,7 @@ def main():
     parser.add_argument("--session", help="Sticky session ID for ScraperAPI to reuse same IP")
     parser.add_argument("--dry-run", action="store_true", help="Print intended requests without making them")
     parser.add_argument("--restrict-path", help="Only crawl URLs that start with this path (e.g., /docs)")
+    parser.add_argument("--skip-existing", action="store_true", help="Skip saving if file already exists")
 
     args = parser.parse_args()
 
@@ -307,7 +313,8 @@ def main():
         scraperapi_config=scraperapi_config,
         dry_run=args.dry_run,
         max_depth=args.max_depth,
-        restrict_path=args.restrict_path
+        restrict_path=args.restrict_path,
+        skip_existing=args.skip_existing
     )
 
     print("\n✅ Done!")

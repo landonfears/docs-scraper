@@ -17,7 +17,7 @@
 
 **Version:** `0.2.12`
 
-A powerful CLI tool to scrape documentation websites into Markdown using rotating proxies, ScraperAPI, and local context injection for GitHub Copilot.
+A powerful CLI tool to scrape documentation websites into Markdown using rotating proxies, ScraperAPI, and local context injection for AI code editors.
 
 ---
 
@@ -27,13 +27,19 @@ A powerful CLI tool to scrape documentation websites into Markdown using rotatin
 pip install -e .
 ```
 
-You’ll then have access to the `scrape-docs` command globally.
+You’ll then have access to the CLI tools globally.
+
+## 🧰 One-time Dev Setup
+
+To install both Python and Node dependencies:
+
+```bash
+./setup-dev.sh
+```
 
 ---
 
-## 🚀 Usage: Scrape Documentation
-
-### Basic Example
+## 🚀 Usage: Scrape Documentation (Static Sites)
 
 ```bash
 scrape-docs \
@@ -41,7 +47,7 @@ scrape-docs \
   --out ~/Documentation/docs-central/shadcn
 ```
 
-### With Proxy Fetching & ScraperAPI Fallback
+### With Proxy & ScraperAPI Fallback
 
 ```bash
 scrape-docs \
@@ -56,17 +62,56 @@ scrape-docs \
   --verbose
 ```
 
-### Optional Flags
+---
 
-- `--dry-run` → Print URLs without scraping (estimate credit usage)
-- `--max-depth` → Limit crawl depth from root
-- `--restrict-path` → Only scrape URLs that begin with `/docs`
+## 🌐 Usage: Scrape SPA Docs (JS-rendered sites)
+
+```bash
+spa-scrape \
+  --url https://tailwindcss.com/docs \
+  --out ~/Documentation/docs-central/tailwind \
+  --proxy-mode both \
+  --retries 5 \
+  --delay 3 \
+  --timeout 60000 \
+  --skip-existing \
+  --headless
+```
+
+### Proxy Modes:
+
+- `premium` → Uses your authenticated proxy (e.g. PacketStream)
+- `free` → Uses ProxyScrape API
+- `both` → Try premium first, then free (default)
+
+### Premium Proxy Setup (via `.env`)
+
+```env
+PREMIUM_PROXY_USER=your_proxy_username
+PREMIUM_PROXY_PASS=your_proxy_password
+```
+
+### Optional Flags:
+
+- `--log proxy_log.txt` → Logs proxy results
+- `--headless false` → Opens a visible browser for debugging
+- `--skip-existing` → Skip pages already saved in output folder
+- `--timeout 60000` → Increase page load timeout in ms
+- `--retry-failed` → Retry from a previous `failed_urls.txt`
+
+After scraping, any permanently failed URLs will be written to `failed_urls.txt`.
+You can rerun them like this:
+
+```bash
+spa-scrape \
+  --url https://tailwindcss.com/docs \
+  --out ~/Documentation/docs-central/tailwind \
+  --retry-failed
+```
 
 ---
 
-## 📦 Usage: Copy Docs to a Project (for Copilot Context)
-
-Use this tool to copy relevant documentation folders into a new project after scaffolding:
+## 📦 Usage: Copy Docs to a Project (for AI Code Editor Context)
 
 ```bash
 copy-docs shadcn prisma \
@@ -75,33 +120,27 @@ copy-docs shadcn prisma \
   --verbose
 ```
 
-### Options
-
-- `--skip-existing` → Skip if the destination folder already exists
-- Prompts to overwrite if not skipped
-
 ---
 
-## 💡 Recommended Dev Flow
+## 🧠 Recommended Dev Flow
 
-1. Scrape docs into a local central archive:
+1. Scrape docs:
 
    ```bash
    scrape-docs --url https://ui.shadcn.com/docs --out ~/Documentation/docs-central/shadcn
+   spa-scrape --url https://tailwindcss.com/docs --out ~/Documentation/docs-central/tailwind
    ```
 
-2. Scaffold a new project:
+2. Scaffold a project:
 
    ```bash
    pnpm create t3-app@latest
    ```
 
-3. Inject relevant context:
+3. Copy docs into the project:
    ```bash
-   copy-docs shadcn tailwind --from ~/Documentation/docs-central --to ./apps/new-project/docs
+   copy-docs shadcn tailwind --from ~/Documentation/docs-central --to ./apps/my-app/docs
    ```
-
-Now GitHub Copilot Chat will understand your tooling’s docs directly in your project! ⚡
 
 ---
 
@@ -110,8 +149,10 @@ Now GitHub Copilot Chat will understand your tooling’s docs directly in your p
 Create a `.env` file:
 
 ```env
-SCRAPERAPI_KEY=your_api_key_here
+SCRAPERAPI_KEY=your_scraperapi_key
 SCRAPERAPI_ENDPOINT=http://api.scraperapi.com
+PREMIUM_PROXY_USER=your_proxy_username
+PREMIUM_PROXY_PASS=your_proxy_password
 ```
 
 Then run:
@@ -128,4 +169,4 @@ MIT
 
 ---
 
-Need help extending this with doc summarization, search indexing, or Copilot config scaffolding? PRs & issues welcome!
+Need help extending this with doc summarization, search indexing, or AI code editor config scaffolding? PRs & issues welcome!
