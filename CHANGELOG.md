@@ -7,6 +7,26 @@
 
 
 
+- auto-update from GitHub Actions [`77180fa`]
+
+
+
+
+### 🚀 Features
+
+
+
+- add retry, proxy fallback, and context-aware skipping [`e8cc045`]
+
+
+## 🚀 v0.2.12 — 2025-03-30
+
+
+
+### 📝 Documentation
+
+
+
 - auto-update from GitHub Actions [`a4e6609`]
 
 
