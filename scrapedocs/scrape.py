@@ -10,9 +10,19 @@ from urllib.parse import urljoin, urlparse, quote_plus
 from bs4 import BeautifulSoup
 from markdownify import markdownify as md
 from dotenv import load_dotenv
+from pathlib import Path
+import shutil
 
 # Load environment variables
 load_dotenv()
+
+def ensure_env_file():
+    example_path = Path(".env.example")
+    actual_path = Path(".env")
+
+    if not actual_path.exists() and example_path.exists():
+        shutil.copy(example_path, actual_path)
+        print("📄 Created .env from .env.example — please fill in your ScraperAPI key.")
 
 visited = set()
 
@@ -300,4 +310,5 @@ def main():
     print("\n✅ Done!")
 
 if __name__ == "__main__":
+    ensure_env_file()
     main()

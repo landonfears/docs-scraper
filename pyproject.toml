@@ -1,0 +1,23 @@
+[project]
+name = "scrape-docs"
+version = "0.1.0"
+description = "CLI tools for scraping and organizing developer documentation."
+authors = [
+    { name = "Your Name" }
+]
+readme = "README.md"
+requires-python = ">=3.7"
+dependencies = [
+    "requests",
+    "beautifulsoup4",
+    "markdownify",
+    "python-dotenv"
+]
+
+[project.scripts]
+scrape-docs = "scrapedocs.scrape:main"
+copy-docs = "scrapedocs.copy:main"
+
+[build-system]
+requires = ["setuptools>=64", "wheel"]
+build-backend = "setuptools.build_meta"
