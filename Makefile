@@ -32,16 +32,19 @@ sync-tag:
 	fi
 
 bump-patch:
+	git pull
 	bump-my-version bump patch
 	git push
 	$(MAKE) sync-tag
 
 bump-minor:
+	git pull
 	bump-my-version bump minor
 	git push
 	$(MAKE) sync-tag
 
 bump-major:
+	git pull
 	bump-my-version bump major
 	git push
 	$(MAKE) sync-tag
