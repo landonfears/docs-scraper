@@ -21,10 +21,10 @@ jobs:
         with:
           python-version: 3.11
 
-      - name: 🧮 Install git-cliff
+      - name: 📦 Install git-cliff
         run: |
-          curl -sSL https://github.com/orhun/git-cliff/releases/latest/download/git-cliff-x86_64-unknown-linux-gnu.tar.gz \
-            | tar -xz
+          curl -sSL https://github.com/orhun/git-cliff/releases/latest/download/git-cliff-linux-x86_64 -o git-cliff
+          chmod +x git-cliff
           sudo mv git-cliff /usr/local/bin/
 
       - name: ✍ Generate changelog
