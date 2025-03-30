@@ -18,4 +18,11 @@ release: changelog
 	git tag v$(VERSION)
 	git push origin main --tags
 
-# make release v=0.2.0
+bump-patch:
+	bump-my-version bump patch && git push
+
+bump-minor:
+	bump-my-version bump minor && git push
+
+bump-major:
+	bump-my-version bump major && git push
