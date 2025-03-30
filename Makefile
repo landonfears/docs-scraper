@@ -7,8 +7,11 @@ update-deps:
 run:
 	scrape-docs --help
 
+changelog-update:
+	git-cliff --tag v$(VERSION) -o CHANGELOG.md
+
 changelog:
-	git-cliff -o CHANGELOG.md
+	git-cliff --tag v$(VERSION) -o CHANGELOG.md
 	git add CHANGELOG.md
 	git commit -m "docs(changelog): update for v$(VERSION)"
 

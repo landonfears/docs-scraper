@@ -1,6 +1,8 @@
 [changelog]
 header = "# Changelog"
 body = """
+## 🚀 {{ version | default(value=\"Unreleased\") }} — {{ timestamp | date(format=\"%Y-%m-%d\") }}
+
 {% for group, commits in commits | group_by(attribute="group") %}
 {% if group == "feat" %}
 ### 🚀 Features
@@ -28,6 +30,7 @@ footer = ""
 trim = true
 sort_commits = "oldest"
 tag_pattern = "v[0-9]*"
+filter_unconventional = false
 
 [git]
 conventional_commits = true

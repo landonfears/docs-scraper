@@ -25,7 +25,7 @@ jobs:
         uses: taiki-e/install-action@git-cliff
 
       - name: ✍ Generate changelog
-        run: git-cliff -o CHANGELOG.md
+        run: git-cliff --tag v${{ steps.version.outputs.version }} -o CHANGELOG.md
 
       - name: 💾 Commit changelog
         run: |
