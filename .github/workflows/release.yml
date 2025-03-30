@@ -21,12 +21,15 @@ jobs:
         with:
           python-version: 3.11
 
-      - name: 📦 Install latest git-cliff
+      - name: 📦 Install git-cliff dynamically (latest release)
         run: |
-          LATEST=$(curl -s https://api.github.com/repos/orhun/git-cliff/releases/latest | jq -r '.tag_name')
-          VERSION=${LATEST#v}
-          echo "➡️ Installing git-cliff $VERSION"
-          curl -sSL https://github.com/orhun/git-cliff/releases/download/${LATEST}/git-cliff-linux-x86_64 -o git-cliff
+          set -e
+          RELEASE_URL=$(curl -s https://api.github.com/repos/orhun/git-cliff/releases/latest \
+            | jq -r '.assets[] | select(.name | test("x86_64.*musl.*tar.gz$")) | .browser_download_url')
+
+          echo "➡️ Downloading from: $RELEASE_URL"
+          curl -sSL "$RELEASE_URL" -o cliff.tar.gz
+          tar -xzf cliff.tar.gz
           chmod +x git-cliff
           sudo mv git-cliff /usr/local/bin/
           git-cliff --version
