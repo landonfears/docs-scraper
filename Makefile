@@ -8,10 +8,10 @@ run:
 	scrape-docs --help
 
 changelog-update:
-	git-cliff --tag v$(VERSION) -o CHANGELOG.md
+	git-cliff --latest --tag v$(VERSION) -o CHANGELOG.md
 
 changelog:
-	git-cliff --tag v$(VERSION) -o CHANGELOG.md
+	git-cliff --latest --tag v$(VERSION) -o CHANGELOG.md
 	git add CHANGELOG.md
 	git commit -m "docs(changelog): update for v$(VERSION)"
 
