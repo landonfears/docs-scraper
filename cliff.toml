@@ -1,0 +1,32 @@
+[changelog]
+header = "# Changelog"
+body = """
+{% for group, commits in commits | group_by(attribute="group") %}
+### {% match group %}
+{% when "feat" %}🚀 Features
+{% when "fix" %}🐛 Fixes
+{% when "chore" %}🔧 Chores
+{% when "docs" %}📝 Documentation
+{% when "refactor" %}🛠 Improvements
+{% when "perf" %}🛠 Improvements
+{% when "style" %}🛠 Improvements
+{% when "test" %}🧪 Testing & CI
+{% when "ci" %}🧪 Testing & CI
+{% else %}🔸 Other
+{% endmatch %}
+
+{% for commit in commits %}
+- {{ commit.message | trim }} [`{{ commit.id | truncate(length=7, end="" ) }}`]
+{% endfor %}
+
+{% endfor %}
+"""
+footer = ""
+trim = true
+sort_commits = "oldest"
+tag_pattern = "v[0-9]*"
+
+[git]
+conventional_commits = true
+filter_unconventional = false  # ← Now include ALL commits!
+tag_pattern = "v[0-9]*"

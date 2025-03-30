@@ -1,0 +1,57 @@
+name: Release & Changelog
+
+on:
+  push:
+    branches:
+      - main
+
+permissions:
+  contents: write
+
+jobs:
+  changelog-release:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: 📂 Checkout code
+        uses: actions/checkout@v3
+
+      - name: 🛠 Set up Python
+        uses: actions/setup-python@v4
+        with:
+          python-version: 3.11
+
+      - name: 🧮 Install git-cliff
+        run: |
+          curl -sSL https://github.com/orhun/git-cliff/releases/latest/download/git-cliff-x86_64-unknown-linux-gnu.tar.gz \
+            | tar -xz
+          sudo mv git-cliff /usr/local/bin/
+
+      - name: ✍ Generate changelog
+        run: git-cliff -o CHANGELOG.md
+
+      - name: 💾 Commit changelog
+        run: |
+          git config user.name "github-actions"
+          git config user.email "github-actions@users.noreply.github.com"
+          git add CHANGELOG.md
+          git commit -m "docs(changelog): auto-update from GitHub Actions" || echo "No changes to commit"
+          git push origin main
+
+      - name: 🌐 Extract version from pyproject.toml
+        id: version
+        run: |
+          VERSION=$(grep '^version =' pyproject.toml | head -1 | cut -d '"' -f2)
+          echo "version=$VERSION" >> $GITHUB_OUTPUT
+
+      - name: 🌟 Create git tag for version
+        run: |
+          git tag v${{ steps.version.outputs.version }}
+          git push origin v${{ steps.version.outputs.version }}
+        continue-on-error: true
+
+      - name: 🌟 Create GitHub release
+        uses: softprops/action-gh-release@v1
+        with:
+          tag_name: v${{ steps.version.outputs.version }}
+          generate_release_notes: true
