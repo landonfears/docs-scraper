@@ -33,7 +33,14 @@ tag = false
 [[tool.bumpversion.files]]
 filename = "pyproject.toml"
 search = 'version = "{current_version}"'
+replace = 'version = "{new_version}"'
 
 [[tool.bumpversion.files]]
 filename = "README.md"
 search = '**Version:** `{current_version}`'
+replace = '**Version:** `{new_version}`'
+
+[[tool.bumpversion.files]]
+filename = "CHANGELOG.md"
+search = "🚀 v{current_version}"
+replace = "🚀 v{new_version}"
