@@ -1,4 +1,21 @@
+<p align="right">
+  <a href="https://github.com/landonfears/scrape-docs/releases">
+    <img alt="GitHub release" src="https://img.shields.io/github/v/release/landonfears/scrape-docs?label=version">
+  </a>
+  <a href="https://github.com/landonfears/scrape-docs/blob/main/LICENSE">
+    <img alt="MIT License" src="https://img.shields.io/github/license/landonfears/scrape-docs">
+  </a>
+  <a href="https://github.com/landonfears/scrape-docs/actions/workflows/release.yml">
+    <img alt="Build Status" src="https://github.com/landonfears/scrape-docs/actions/workflows/release.yml/badge.svg">
+  </a>
+  <a href="https://www.python.org/downloads/">
+    <img alt="Python" src="https://img.shields.io/badge/python-3.7%2B-blue.svg">
+  </a>
+</p>
+
 # scrape-docs
+
+**Version:** `0.2.0`
 
 A powerful CLI tool to scrape documentation websites into Markdown using rotating proxies, ScraperAPI, and local context injection for GitHub Copilot.
 

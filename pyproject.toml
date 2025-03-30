@@ -31,5 +31,9 @@ commit = true
 tag = false
 
 [[tool.bumpversion.files]]
-path = "pyproject.toml"
+filename = "pyproject.toml"
 search = 'version = "{current_version}"'
+
+[[tool.bumpversion.files]]
+filename = "README.md"
+search = '**Version:** `{current_version}`'
