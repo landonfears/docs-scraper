@@ -60,8 +60,15 @@ async function scrapeUrls(
 
         links.forEach((link) => {
           const cleanLink = link.replace(/\/$/, "");
+          const filename = slugify(cleanLink);
+          const outPath = path.join(outputDir, `${filename}.md`);
+
           if (!visited.has(cleanLink) && cleanLink.startsWith(baseUrl)) {
-            urls.push(cleanLink);
+            if (!skipExisting || !fs.existsSync(outPath)) {
+              urls.push(cleanLink);
+            } else {
+              console.log(`✅ Already scraped: ${cleanLink}`);
+            }
           }
         });
 
@@ -98,6 +105,19 @@ function slugify(url) {
   );
 }
 
+async function getLinks(url, page, selector, timeout) {
+  await page.goto(url, { waitUntil: "domcontentloaded", timeout });
+  await page.waitForTimeout(3000);
+
+  return await page.evaluate((selector) => {
+    const anchors = Array.from(document.querySelectorAll(selector));
+    return anchors.map((a) => ({
+      href: new URL(a.getAttribute("href"), location.origin).href,
+      text: a.textContent.trim(),
+    }));
+  }, selector);
+}
+
 async function scrapeViaClicks(
   page,
   baseUrl,
@@ -111,20 +131,16 @@ async function scrapeViaClicks(
   const visited = new Set();
   const failed = [];
 
-  await page.goto(baseUrl, { waitUntil: "domcontentloaded", timeout });
-  await page.waitForTimeout(3000);
+  let links = await getLinks(baseUrl, page, navSelector, timeout);
 
-  const links = await page.evaluate((selector) => {
-    const anchors = Array.from(document.querySelectorAll(selector));
-    return anchors.map((a) => ({
-      href: new URL(a.getAttribute("href"), location.origin).href,
-      text: a.textContent.trim(),
-    }));
-  }, navSelector);
+  while (links.length > 0) {
+    const link = links.shift();
+    const href = link.href;
+    // const text = link.text;
 
-  for (const { href } of links) {
     if (visited.has(href)) continue;
     visited.add(href);
+    links = [...links, ...(await getLinks(href, page, navSelector))];
 
     for (let attempt = 1; attempt <= retries; attempt++) {
       try {
@@ -193,7 +209,12 @@ async function scrapeSite(
     let auth = null;
 
     if (useProxy && proxy) {
-      const proxyPrefix = proxyType === "socks5" ? "socks5://" : "http://";
+      let proxyPrefix = "http://";
+      if (proxyType === "socks5") {
+        proxyPrefix = "socks5://";
+      } else if (proxyType === "socks4") {
+        proxyPrefix = "socks4://";
+      }
       if (proxy.includes("@")) {
         const [creds, host] = proxy.split("@");
         const [username, password] = creds.split(":");
@@ -285,7 +306,7 @@ async function scrapeSite(
     console.log("✅ Done scraping.");
   }
 
-  await launchAndScrape(true);
+  await launchAndScrape(proxy ? true : false);
 }
 
 if (require.main === module) {
@@ -299,9 +320,9 @@ if (require.main === module) {
   const timeoutArg = args.find((arg) => arg.startsWith("--timeout="));
   const proxyArg = args.find((arg) => arg.startsWith("--proxy="));
   const proxyTypeArg = args.find((arg) => arg.startsWith("--proxy-type="));
-  const skipExisting = args.includes("--skip-existing");
   const retryFailedOnly = args.includes("--retry-failed");
   const clickNav = args.includes("--click-nav");
+  const skipExisting = args.includes("--skip-existing");
   const navSelectorArg = args.find((arg) => arg.startsWith("--nav-selector="));
 
   const retries = retriesArg ? parseInt(retriesArg.split("=")[1]) : 3;
@@ -315,7 +336,7 @@ if (require.main === module) {
 
   if (!url || !outDir) {
     console.error(
-      "Usage: node puppeteer_scraper.js <url> <outputDir> [--headless=false] [--retries=N] [--delay=MS] [--timeout=MS] [--proxy=ip:port] [--proxy-type=http|socks5] [--skip-existing] [--retry-failed] [--click-nav] [--nav-selector='selector']"
+      "Usage: node puppeteer_scraper.js <url> <outputDir> [--headless=false] [--retries=N] [--delay=MS] [--timeout=MS] [--proxy=ip:port] [--proxy-type=http|socks4|socks5] [--skip-existing] [--retry-failed] [--click-nav] [--nav-selector='selector']"
     );
     process.exit(1);
   }

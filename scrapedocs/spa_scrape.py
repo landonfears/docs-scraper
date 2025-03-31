@@ -23,6 +23,43 @@ def fetch_proxies_from_api(api_url: str, limit: int = 10):
         print(f"❌ Failed to fetch proxies: {e}")
         return []
 
+def test_proxy(proxy_url, proxy_type="http", headers=None):
+    schema = f"{proxy_type}://"
+    proxy = {"http": schema + proxy_url, "https": schema + proxy_url}
+    try:
+        res = requests.get("http://httpbin.org/ip", proxies=proxy, headers=headers, timeout=5)
+        if res.status_code == 200:
+            print(f"✅ Valid {proxy_type.upper()} proxy: {proxy_url}")
+            return proxy_url
+    except Exception:
+        print(f"❌ Failed {proxy_type.upper()} proxy: {proxy_url}")
+    return None
+
+def load_and_validate_proxies(scheme, source_url, limit, headers):
+    valid_proxies = {}
+    proxies = fetch_proxies_from_api(source_url, limit)
+    working = []
+    for p in proxies:
+        result = test_proxy(p, scheme, headers=headers)
+        if result:
+            working.append(result)
+    if working:
+        valid_proxies[scheme] = working
+        
+
+    if scheme:
+        selected = scheme
+        if selected not in valid_proxies:
+            print(f"🚫 No valid proxies found for type: {selected.upper()}")
+            return None, selected
+        return valid_proxies[selected], selected
+
+    if valid_proxies:
+        auto_type = next(iter(valid_proxies))
+        return valid_proxies[auto_type], auto_type
+
+    print("🚫 No valid proxies found.")
+    return None, None
 
 def log_proxy_result(proxy: str, status: str, logfile: Path):
     with open(logfile, "a") as f:
@@ -47,8 +84,6 @@ def run_puppeteer_scraper(url: str, out_dir: str, headless: bool = True, retries
         args.append("--click-nav")
     if nav_selector:
         args.append(f"--nav-selector={nav_selector}")
-    if skip_existing:
-        args.append("--skip-existing")
     if retry_failed:
         args.append("--retry-failed")
 
@@ -63,22 +98,28 @@ def main():
     parser.add_argument("--retries", type=int, default=3)
     parser.add_argument("--delay", type=int, default=2)
     parser.add_argument("--timeout", type=int, default=60000)
-    parser.add_argument("--skip-existing", action="store_true")
     parser.add_argument("--proxy-mode", choices=["premium", "free", "both"], default="both")
-    parser.add_argument("--proxy-type", choices=["http", "socks5"], default="http")
+    parser.add_argument("--proxy-type", choices=["http", "socks4", "socks5"], default="http")
     parser.add_argument("--premium-user", default=os.getenv("PREMIUM_PROXY_USER"))
     parser.add_argument("--premium-pass", default=os.getenv("PREMIUM_PROXY_PASS"))
     parser.add_argument("--log", default="proxy_log.txt")
     parser.add_argument("--click-nav", action="store_true", help="Enable click-based sidebar scraping")
     parser.add_argument("--nav-selector", default=".sidebar a", help="CSS selector for sidebar nav links")
     parser.add_argument("--retry-failed", action="store_true", help="Retry scraping failed_urls.txt from the output directory")
+    parser.add_argument("--skip-existing", action="store_true", help="Skip saving if markdown already exists")
     args = parser.parse_args()
 
     log_path = Path(args.log).expanduser().resolve()
     log_path.write_text("")
 
+    if args.proxy_type == "socks5":
+        scheme = "socks5"
+    elif args.proxy_type == "socks4":
+        scheme = "socks4"
+    else:
+        scheme = "http"
+
     if args.proxy_mode == "premium" and args.premium_user and args.premium_pass:
-        scheme = "socks5" if args.proxy_type == "socks5" else "http"
         premium_proxy = f"{args.premium_user}:{args.premium_pass}@proxy.packetstream.io:31112"
         try:
             print(f"🌐 Using Premium proxy: {scheme}://{premium_proxy}")
@@ -105,9 +146,22 @@ def main():
     proxy_sources = []
     if args.proxy_mode in ("free", "both"):
         proxy_sources.append("https://api.proxyscrape.com/v4/free-proxy-list/get?request=display_proxies&proxy_format=protocolipport&format=text")
-
+    
     for source_url in proxy_sources:
-        proxies = fetch_proxies_from_api(source_url, limit=20)
+
+
+        proxies = None
+        # proxy_type = args.proxy_type or "http"
+        # if args.http_api or args.socks4_api or args.socks5_api:
+        proxies = load_and_validate_proxies(scheme, source_url, limit=20, headers={
+            "User-Agent": (
+                "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) "
+                "AppleWebKit/537.36 (KHTML, like Gecko) "
+                "Chrome/122.0.0.0 Safari/537.36"
+            )
+        })
+
+        # proxies = fetch_proxies_from_api(source_url, limit=20)
         for i, proxy in enumerate(proxies):
             try:
                 print(f"🌐 Trying proxy [{i+1}/{len(proxies)}]: {proxy}")
