@@ -22,8 +22,9 @@ async function scrapeUrls(
 ) {
   while (urls.length > 0) {
     const url = urls.pop();
-    if (visited.has(url)) continue;
-    visited.add(url);
+    const cleanUrl = url.replace(/\/$/, ""); // normalize without trailing slash
+    if (visited.has(cleanUrl)) continue;
+    visited.add(cleanUrl);
 
     const urlPath = new URL(url).pathname.replace(/\/$/, "");
     const filename = urlPath.split("/").filter(Boolean).join("-") || "index";
@@ -58,8 +59,9 @@ async function scrapeUrls(
         );
 
         links.forEach((link) => {
-          if (!visited.has(link) && link.startsWith(baseUrl)) {
-            urls.push(link);
+          const cleanLink = link.replace(/\/$/, "");
+          if (!visited.has(cleanLink) && cleanLink.startsWith(baseUrl)) {
+            urls.push(cleanLink);
           }
         });
 
