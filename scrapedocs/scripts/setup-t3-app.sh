@@ -9,7 +9,8 @@ APP_NAME=${1:-t3-app}
 
 echo "🧱 Scaffolding T3 app in folder: $APP_NAME"
 
-pnpm create t3-app@latest "$APP_NAME" -- --noGit
+T3_VERSION=${2:-latest}
+pnpm create "t3-app@$T3_VERSION" "$APP_NAME" -- --noGit
 cd "$APP_NAME"
 
 echo "📦 Installing dependencies with pnpm"
