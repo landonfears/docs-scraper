@@ -15,7 +15,7 @@
 
 # docs-scraper
 
-**Version:** `0.3.3`
+**Version:** `0.3.4`
 
 A powerful CLI tool to scrape documentation websites into Markdown using rotating proxies, ScraperAPI, and local context injection for AI code editors.
 
