@@ -7,6 +7,26 @@
 
 
 
+- auto-update from GitHub Actions [`988b981`]
+
+
+
+
+### 🐛 Fixes
+
+
+
+- normalize urls without trailing slash [`d761beb`]
+
+
+## 🚀 v0.3.2 — 2025-03-31
+
+
+
+### 📝 Documentation
+
+
+
 - auto-update from GitHub Actions [`b33a511`]
 
 
