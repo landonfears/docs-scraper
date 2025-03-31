@@ -1,5 +1,25 @@
 # Changelog
-## 🚀 v0.3.2 — 2025-03-30
+## 🚀 v0.3.2 — 2025-03-31
+
+
+
+### 📝 Documentation
+
+
+
+- auto-update from GitHub Actions [`b33a511`]
+
+
+
+
+### 🐛 Fixes
+
+
+
+- check for uppercase tunnel error [`9f7df88`]
+
+
+## 🚀 v0.3.1 — 2025-03-30
 
 
 
