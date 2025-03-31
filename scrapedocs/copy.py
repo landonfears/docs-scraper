@@ -29,7 +29,7 @@ def copy_docs(topics, source_dir, target_dir, verbose=False, skip_existing=False
             print(f"✅ Copied {topic} to {dst_path}")
 
 def main():
-    parser = argparse.ArgumentParser(description="Copy scraped docs into your project for Copilot context")
+    parser = argparse.ArgumentParser(description="Copy scraped docs into your project for AI code editor context")
     parser.add_argument("topics", nargs="+", help="Names of the doc folders to copy (e.g., shadcn tailwind prisma)")
     parser.add_argument("--from", dest="source_dir", required=True, help="Centralized docs location")
     parser.add_argument("--to", dest="target_dir", required=True, help="Destination project's /docs directory")
