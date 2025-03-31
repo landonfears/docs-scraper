@@ -54,8 +54,10 @@ async function scrapeUrls(
 
         const links = await page.$$eval("a", (as) =>
           as
-            .map((a) => a.href)
-            .filter((href) => href.includes("/docs") && href.startsWith("http"))
+            .map((a) => a.href.split("#")[0])
+            .filter((href) =>
+              href.startsWith(location.origin + location.pathname)
+            )
         );
 
         links.forEach((link) => {
@@ -118,6 +120,19 @@ async function getLinks(url, page, selector, timeout) {
   }, selector);
 }
 
+function filterByOrigin(links, baseUrl) {
+  return links.filter((link) => isSameDomain(link.href, baseUrl));
+}
+
+function isSameDomain(url, baseUrl) {
+  const urlObj = new URL(url);
+  const baseUrlObj = new URL(baseUrl);
+  return (
+    urlObj?.origin === baseUrlObj?.origin &&
+    urlObj?.pathname?.startsWith(baseUrlObj?.pathname)
+  );
+}
+
 async function scrapeViaClicks(
   page,
   baseUrl,
@@ -131,16 +146,21 @@ async function scrapeViaClicks(
   const visited = new Set();
   const failed = [];
 
-  let links = await getLinks(baseUrl, page, navSelector, timeout);
+  let links = filterByOrigin(
+    await getLinks(baseUrl, page, navSelector, timeout),
+    baseUrl
+  );
 
   while (links.length > 0) {
     const link = links.shift();
     const href = link.href;
-    // const text = link.text;
 
     if (visited.has(href)) continue;
     visited.add(href);
-    links = [...links, ...(await getLinks(href, page, navSelector))];
+    links = [
+      ...links,
+      ...filterByOrigin(await getLinks(href, page, navSelector), baseUrl),
+    ];
 
     for (let attempt = 1; attempt <= retries; attempt++) {
       try {
@@ -153,7 +173,7 @@ async function scrapeViaClicks(
         }, href);
 
         await page.waitForTimeout(3000);
-        await page.waitForSelector("main, .content, article", {
+        await page.waitForSelector("main, .content, article, div.flex", {
           timeout: 5000,
         });
 
