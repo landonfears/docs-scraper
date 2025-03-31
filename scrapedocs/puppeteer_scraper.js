@@ -65,6 +65,10 @@ async function scrapeUrls(
 
         break; // success
       } catch (err) {
+        if (err.message.toLowerCase().includes("tunnel")) {
+          throw err;
+        }
+
         console.warn(
           `⚠️ Failed to scrape ${url} (Attempt ${attempt}): ${err.message}`
         );
@@ -265,7 +269,7 @@ async function scrapeSite(
       }
     } catch (error) {
       await browser.close();
-      if (useProxy && error.message.includes("tunnel")) {
+      if (useProxy && error.message.toLowerCase().includes("tunnel")) {
         console.warn(
           "⚠️ Proxy failed due to tunnel error. Retrying without proxy..."
         );
