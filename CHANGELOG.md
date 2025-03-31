@@ -7,6 +7,17 @@
 
 
 
+- auto-update from GitHub Actions [`57e45d8`]
+
+
+## 🚀 v0.3.3 — 2025-03-31
+
+
+
+### 📝 Documentation
+
+
+
 - auto-update from GitHub Actions [`988b981`]
 
 
