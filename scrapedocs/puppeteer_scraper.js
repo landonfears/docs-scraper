@@ -326,7 +326,11 @@ async function scrapeSite(
     console.log("✅ Done scraping.");
   }
 
-  await launchAndScrape(proxy ? true : false);
+  try {
+    await launchAndScrape(proxy ? true : false);
+  } catch (error) {
+    console.error("❌ Scrape Site Error:", error);
+  }
 }
 
 if (require.main === module) {
