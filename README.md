@@ -122,6 +122,21 @@ copy-docs shadcn prisma \
 
 ---
 
+### 🧼 Sanitize Scraped Markdown
+
+Clean all `.md` files in a folder by removing:
+
+- `<script>` / `<style>` tags
+- CDATA
+- class/style attributes
+- invalid Tailwind examples like `inset-[var(<custom-property>)]`
+
+```bash
+sanitize-docs --path ~/Documentation/docs-central
+```
+
+---
+
 ## 🧠 Recommended Dev Flow
 
 1. Scrape docs:

@@ -38,7 +38,7 @@ def copy_docs(topics, source_root, dest_root, verbose=False):
 
         if dst.exists():
             shutil.rmtree(dst)
-        shutil.copytree(src, dst)
+        dst.symlink_to(src, target_is_directory=True)
         if verbose:
             print(f"✅ Copied {topic} to {dst}")
 

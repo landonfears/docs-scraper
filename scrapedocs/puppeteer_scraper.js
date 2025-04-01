@@ -8,6 +8,45 @@ puppeteer.use(StealthPlugin());
 
 const turndown = new TurndownService();
 
+function sanitizeMarkdown(md, verbose = false) {
+  const lines = md.split("\n");
+  const result = [];
+
+  for (let i = 0; i < lines.length; i++) {
+    const line = lines[i].replace(/[\u200b\u200c\u200d\u2060]/g, "");
+    const next = (lines[i + 1] || "").replace(
+      /[\u200b\u200c\u200d\u2060]/g,
+      ""
+    );
+    const trimmed = line.trim();
+
+    const hasBalancedBrackets = /^\s*\[.*?\]\s*$/.test(trimmed);
+    const isLikelyMarkdown =
+      hasBalancedBrackets ||
+      /^(\*+|#+|\d+\.|\[.*?\]\(.*?\)|```|>|-{3,}|_{3,})$/.test(trimmed) ||
+      /^[\[\(]{1,2}$/.test(trimmed);
+
+    const isBrokenMarkdownLink =
+      /^\s*\[.*?\]\s*$/.test(trimmed) && /^\s*\]\(.*?\)/.test(next.trim());
+
+    const shouldRemove =
+      !isLikelyMarkdown &&
+      !isBrokenMarkdownLink &&
+      (trimmed.length > 200 ||
+        /!function|window\.|document\.|:where\\|--/.test(trimmed) ||
+        (trimmed.match(/[^\w\s]/g) || []).length / Math.max(trimmed.length, 1) >
+          0.5);
+
+    if (shouldRemove) {
+      if (verbose) console.log("🗑️ Removing:", line.slice(0, 120));
+    } else {
+      result.push(line);
+    }
+  }
+
+  return result.join("\n").trim();
+}
+
 async function scrapeUrls(
   page,
   urls,
@@ -38,7 +77,8 @@ async function scrapeUrls(
         await page.waitForTimeout(3000);
 
         const html = await page.content();
-        const markdown = turndown.turndown(html);
+        let markdown = turndown.turndown(html);
+        markdown = sanitizeMarkdown(markdown, false);
 
         if (!html || html.length < 1000) {
           throw new Error(
@@ -178,7 +218,8 @@ async function scrapeViaClicks(
         });
 
         const html = await page.content();
-        const markdown = turndown.turndown(html);
+        let markdown = turndown.turndown(html);
+        markdown = sanitizeMarkdown(markdown, false);
         const filename = slugify(href);
         const outPath = path.join(outputDir, `${filename}.md`);
 
@@ -382,3 +423,4 @@ if (require.main === module) {
 }
 
 module.exports = scrapeSite;
+module.exports.sanitizeMarkdown = sanitizeMarkdown;

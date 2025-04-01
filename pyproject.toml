@@ -11,7 +11,8 @@ dependencies = [
     "requests",
     "beautifulsoup4",
     "markdownify",
-    "python-dotenv"
+    "python-dotenv",
+    "click"
 ]
 
 [project.optional-dependencies]
@@ -23,6 +24,7 @@ copy-docs = "scrapedocs.copy:main"
 inject-context = "scrapedocs.inject_context:main"
 create-stack = "scrapedocs.create_stack_launcher:main"
 spa-scrape = "scrapedocs.spa_scrape:main"
+sanitize-docs = "scrapedocs.sanitize_docs:sanitize_docs"
 
 [build-system]
 requires = ["setuptools>=64", "wheel"]
@@ -47,3 +49,8 @@ replace = '**Version:** `{new_version}`'
 filename = "CHANGELOG.md"
 search = "🚀 v{current_version}"
 replace = "🚀 v{new_version}"
+
+[[tool.bumpversion.files]]
+filename = "scrapedocs/create_stack_launcher"
+search = "create-stack version {current_version}"
+replace = "create-stack version {new_version}"
