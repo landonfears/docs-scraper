@@ -7,6 +7,39 @@
 
 
 
+- auto-update from GitHub Actions [`e98e5ad`]
+
+
+
+
+### 🚀 Features
+
+
+
+- use custom docs folder and t3 app version [`5f13f5f`]
+
+
+
+
+### 🐛 Fixes
+
+
+
+- output error instead of throwing in scraper [`9ee2b07`]
+
+- make stack setup scripts executable [`2ce9208`]
+
+- remove noGit option from t3 app create [`b854a63`]
+
+
+## 🚀 v0.3.5 — 2025-03-31
+
+
+
+### 📝 Documentation
+
+
+
 - auto-update from GitHub Actions [`da27f62`]
 
 
