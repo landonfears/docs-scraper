@@ -1,5 +1,16 @@
 # Changelog
-## 🚀 v0.4.0 — 2025-03-31
+## 🚀 v0.4.0 — 2025-04-01
+
+
+
+### 📝 Documentation
+
+
+
+- auto-update from GitHub Actions [`80fdfef`]
+
+
+## 🚀 v0.3.6 — 2025-03-31
 
 
 
