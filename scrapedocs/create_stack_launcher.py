@@ -20,7 +20,7 @@ def main():
         return
 
     if "--version" in sys.argv:
-        print("create-stack version 0.3.6")
+        print("create-stack version 0.4.0")
         return
 
     subprocess.run(["bash", str(script_path), *sys.argv[1:]], check=True)
