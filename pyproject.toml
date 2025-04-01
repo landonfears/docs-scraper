@@ -51,6 +51,6 @@ search = "🚀 v{current_version}"
 replace = "🚀 v{new_version}"
 
 [[tool.bumpversion.files]]
-filename = "scrapedocs/create_stack_launcher"
+filename = "scrapedocs/create_stack_launcher.py"
 search = "create-stack version {current_version}"
 replace = "create-stack version {new_version}"
