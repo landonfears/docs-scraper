@@ -24,7 +24,8 @@ def copy_docs(topics, source_dir, target_dir, verbose=False, skip_existing=False
                 continue
             shutil.rmtree(dst_path)
 
-        shutil.copytree(src_path, dst_path)
+        dst_path.symlink_to(src_path, target_is_directory=True)
+        # shutil.copytree(src_path, dst_path)
         if verbose:
             print(f"✅ Copied {topic} to {dst_path}")
 

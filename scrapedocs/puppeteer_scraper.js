@@ -184,7 +184,25 @@ async function scrapeViaClicks(
   navSelector = ".sidebar a"
 ) {
   const visited = new Set();
+  const visitedPrevious = new Set();
   const failed = [];
+
+  // Only add existing files to visited if skipExisting is true
+  if (skipExisting) {
+    const baseUrlObj = new URL(baseUrl);
+    const baseUrlWithoutPath = `${baseUrlObj.origin}`;
+
+    const existingFiles = fs
+      .readdirSync(outputDir)
+      .filter((file) => file.endsWith(".md"))
+      .map((file) => {
+        const filename = path.basename(file, ".md");
+        // Reconstruct the URL by splitting the filename and joining with slashes
+        const urlPath = filename.split("-").join("/");
+        return `${baseUrlWithoutPath}/${urlPath}`;
+      });
+    existingFiles.forEach((url) => visitedPrevious.add(url));
+  }
 
   let links = filterByOrigin(
     await getLinks(baseUrl, page, navSelector, timeout),
@@ -195,12 +213,19 @@ async function scrapeViaClicks(
     const link = links.shift();
     const href = link.href;
 
-    if (visited.has(href)) continue;
+    if (visited.has(href)) {
+      console.log(`✅ Already scraped: ${href}`);
+      continue;
+    }
     visited.add(href);
     links = [
       ...links,
       ...filterByOrigin(await getLinks(href, page, navSelector), baseUrl),
     ];
+    if (visitedPrevious.has(href)) {
+      console.log(`✅ Already scraped in the past: ${href}`);
+      continue;
+    }
 
     for (let attempt = 1; attempt <= retries; attempt++) {
       try {
