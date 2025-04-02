@@ -1,5 +1,25 @@
 # Changelog
-## 🚀 v0.4.2 — 2025-04-01
+## 🚀 v0.4.2 — 2025-04-02
+
+
+
+### 📝 Documentation
+
+
+
+- auto-update from GitHub Actions [`094f909`]
+
+
+
+
+### 💠 Improvements
+
+
+
+- improved existing link filtering and protocol timeout [`8440464`]
+
+
+## 🚀 v0.4.1 — 2025-04-01
 
 
 
