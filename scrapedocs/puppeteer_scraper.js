@@ -92,12 +92,13 @@ async function scrapeUrls(
           fs.writeFileSync(outPath, markdown);
         }
 
-        const links = await page.$$eval("a", (as) =>
-          as
-            .map((a) => a.href.split("#")[0])
-            .filter((href) =>
-              href.startsWith(location.origin + location.pathname)
-            )
+        const links = await page.$$eval(
+          "a",
+          (as, baseUrl) =>
+            as
+              .map((a) => a.href.split("#")[0])
+              .filter((href) => href.startsWith(baseUrl)),
+          baseUrl
         );
 
         links.forEach((link) => {
@@ -315,6 +316,7 @@ async function scrapeSite(
 
     const browser = await puppeteer.launch({
       headless: headless ? "new" : false,
+      protocolTimeout: 60000,
       args: launchArgs,
     });
     const context = await browser.createIncognitoBrowserContext();
