@@ -1,5 +1,25 @@
 # Changelog
-## 🚀 v0.5.0 — 2025-04-02
+## 🚀 v0.5.0 — 2025-04-03
+
+
+
+### 📝 Documentation
+
+
+
+- auto-update from GitHub Actions [`0365ef8`]
+
+
+
+
+### 🚀 Features
+
+
+
+- update workflow to inject cursor rules instead of docs [`e6f9538`]
+
+
+## 🚀 v0.4.2 — 2025-04-02
 
 
 
