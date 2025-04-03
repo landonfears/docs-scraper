@@ -42,11 +42,12 @@ read -rp "Project name: " PROJECT_NAME
 PROJECT_PATH="./$PROJECT_NAME"
 
 echo
-read -rp "📚 Where are your scraped docs stored? (press Enter to use ~/Documentation/docs-central): " SOURCE_DOCS
-SOURCE_DOCS=${SOURCE_DOCS:-~/Documentation/docs-central}
+read -rp "📚 Where are your scraped docs stored? (press Enter to use ~/Documentation/rules): " SOURCE_DOCS
+SOURCE_DOCS=${SOURCE_DOCS:-~/Documentation/rules}
 
-echo "\n📚 Which docs do you want to inject? (space separated, e.g. shadcn tailwind prisma)"
-read -rp "Docs: " DOC_LIST
+echo "\n📚 Which rules do you want to inject? (space separated, e.g. convex t3 react-query)"
+read -rp "Rules: " RULE_LIST
+RULE_LIST=${RULE_LIST:-"convex t3 react-query"}
 
 # Scaffold stack
 if [ "$STACK_NAME" == "t3" ]; then
@@ -57,6 +58,6 @@ else
   mkdir -p "$PROJECT_NAME"
 fi
 
-inject-context "$PROJECT_PATH" --docs $DOC_LIST --from "$SOURCE_DOCS" --verbose
-
+# inject-context "$PROJECT_PATH" --docs $DOC_LIST --from "$SOURCE_DOCS" --verbose
+inject-rules "$PROJECT_PATH" --rules $RULE_LIST --from "$SOURCE_DOCS" --verbose
 echo -e "\n✅ \033[1;32mProject created at $PROJECT_PATH with injected context and stack: $STACK_NAME\033[0m\n"

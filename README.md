@@ -17,7 +17,7 @@
 
 **Version:** `0.4.2`
 
-A powerful CLI tool to scrape documentation websites into Markdown using rotating proxies, ScraperAPI, and local context injection for AI code editors.
+A powerful CLI tool to scrape documentation websites into Markdown using rotating proxies, ScraperAPI, and local context/rule injection for AI code editors.
 
 ---
 

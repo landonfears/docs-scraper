@@ -22,6 +22,7 @@ dev = ["bump-my-version"]
 scrape-docs = "scrapedocs.scrape:main"
 copy-docs = "scrapedocs.copy:main"
 inject-context = "scrapedocs.inject_context:main"
+inject-rules = "scrapedocs.inject_rules:main"
 create-stack = "scrapedocs.create_stack_launcher:main"
 spa-scrape = "scrapedocs.spa_scrape:main"
 sanitize-docs = "scrapedocs.sanitize_docs:sanitize_docs"
